@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500" role="img" aria-label="Hoodie">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f6f1fb"/>
+      <stop offset="0.55" stop-color="#e9ecf8"/>
+      <stop offset="1" stop-color="#fbeef2"/>
+    </linearGradient>
+    <linearGradient id="hood" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a78bfa"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#bg)"/>
+  <circle cx="170" cy="120" r="70" fill="#7c3aed" opacity="0.10"/>
+  <circle cx="670" cy="430" r="86" fill="#f472b6" opacity="0.08"/>
+  <ellipse cx="400" cy="416" rx="210" ry="30" fill="#4648d4" opacity="0.10"/>
+  <g transform="rotate(-3 400 300)">
+    <path d="M290 220 C290 160 340 132 400 132 C460 132 510 160 510 220 L510 320 L290 320 Z" fill="url(#hood)"/>
+    <path d="M340 190 C356 150 444 150 460 190 L490 320 L310 320 Z" fill="#8b5cf6"/>
+    <path d="M340 190 Q400 224 460 190" stroke="#fdf4ff" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <path d="M344 146 L344 104" stroke="#6d28d9" stroke-width="10" stroke-linecap="round"/>
+    <path d="M456 146 L456 104" stroke="#6d28d9" stroke-width="10" stroke-linecap="round"/>
+    <circle cx="344" cy="100" r="8" fill="#fbbf24"/>
+    <circle cx="456" cy="100" r="8" fill="#fbbf24"/>
+    <rect x="304" y="320" width="192" height="34" rx="14" fill="#7c3aed"/>
+    <path d="M400 300 L400 356" stroke="#6d28d9" stroke-width="8" stroke-linecap="round"/>
+  </g>
+</svg>

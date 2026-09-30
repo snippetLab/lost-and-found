@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500" role="img" aria-label="Closed umbrella">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eef7fb"/>
+      <stop offset="0.55" stop-color="#e8ecf8"/>
+      <stop offset="1" stop-color="#fbeef2"/>
+    </linearGradient>
+    <linearGradient id="canopy" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0ea5e9"/>
+      <stop offset="1" stop-color="#38bdf8"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#bg)"/>
+  <circle cx="165" cy="115" r="72" fill="#0ea5e9" opacity="0.10"/>
+  <circle cx="680" cy="420" r="86" fill="#7c3aed" opacity="0.08"/>
+  <ellipse cx="400" cy="412" rx="210" ry="30" fill="#4648d4" opacity="0.10"/>
+  <g transform="rotate(-8 400 300)">
+    <path d="M356 130 L444 130 L436 360 L364 360 Z" fill="url(#canopy)"/>
+    <path d="M380 130 L420 130 L416 358 L384 358 Z" fill="#f0f9ff" opacity="0.5"/>
+    <path d="M400 130 L400 60" stroke="#94a3b8" stroke-width="10" stroke-linecap="round"/>
+    <path d="M436 388 C436 406 400 422 390 404 C382 424 356 406 356 388 C356 376 366 372 372 378 C376 384 380 386 384 384" stroke="#475569" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <rect x="330" y="330" width="24" height="44" rx="12" fill="#475569"/>
+    <path d="M420 300 C428 320 420 344 408 348" stroke="#bae6fd" stroke-width="4" fill="none" stroke-linecap="round"/>
+  </g>
+</svg>

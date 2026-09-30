@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browse Items — Campus Lost &amp; Found Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=20260929">
+  <style>
+    .browse-headline { padding-top: var(--space-xl); padding-bottom: var(--space-sm); }
+    .filter-segment { display: inline-flex; border-radius: var(--radius-full); overflow: hidden; border: 1px solid var(--border-subtle); background: var(--surface-container-low); }
+    .filter-segment button {
+      padding: 0.375rem 0.875rem; font-size: 0.75rem; font-weight: 600;
+      color: var(--on-surface-variant); background: transparent; border: none;
+      transition: all 0.2s ease; cursor: pointer; white-space: nowrap;
+    }
+    .filter-segment button.active { background: var(--primary); color: var(--on-primary); border-radius: var(--radius-full); }
+    .filter-segment button:hover:not(.active) { background: var(--surface-container); }
+    .filter-chip {
+      display: inline-flex; align-items: center; gap: 0.25rem;
+      padding: 0.25rem 0.625rem; border-radius: var(--radius-full);
+      background: var(--surface-container-high); color: var(--primary);
+      font-size: 0.6875rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
+    }
+    .filter-chip:hover { background: var(--primary); color: var(--on-primary); }
+    .filter-chip .material-symbols-outlined { font-size: 14px; }
+    .item-card { position: relative; overflow: hidden; }
+    .item-card .card-image { position: relative; overflow: hidden; }
+    .item-card .card-image img { transition: transform 0.3s ease; }
+    .item-card:hover .card-image img { transform: scale(1.05); }
+    .item-card .status-badge { position: absolute; top: 10px; left: 10px; z-index: 2; }
+    .item-card .secondary-badge { position: absolute; top: 10px; right: 10px; z-index: 2; }
+    .item-card .custody-bar {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 2;
+      padding: 0.375rem 0.75rem; font-size: 0.6875rem; font-weight: 700;
+      color: var(--on-primary); backdrop-filter: blur(8px);
+      letter-spacing: 0.03em; text-transform: uppercase;
+    }
+    .custody-vault { background: rgba(5, 150, 105, 0.85); }
+    .custody-frontdesk { background: rgba(2, 132, 199, 0.85); }
+    .custody-bulletin { background: rgba(109, 40, 217, 0.85); }
+    .popular-pill {
+      display: inline-flex; align-items: center; gap: 0.25rem;
+      padding: 0.375rem 0.75rem; border-radius: var(--radius-full);
+      background: var(--surface-container); color: var(--on-surface-variant);
+      font-size: 0.75rem; font-weight: 600; cursor: pointer;
+      transition: all 0.2s ease; border: 1px solid var(--border-subtle);
+    }
+    .popular-pill:hover { background: var(--surface-container-high); color: var(--primary); border-color: var(--primary); }
+    .popular-pill .material-symbols-outlined { font-size: 16px; }
+    .view-toggle button {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--on-surface-variant); transition: all 0.2s ease; cursor: pointer;
+    }
+    .view-toggle button.active { background: var(--primary); color: var(--on-primary); }
+    .view-toggle button:hover:not(.active) { background: var(--surface-container); }
+    .search-clear {
+      width: 28px; height: 28px; border-radius: 8px;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--on-surface-variant); cursor: pointer; transition: all 0.2s ease;
+    }
+    .search-clear:hover { background: var(--surface-container-high); }
+    .search-clear .material-symbols-outlined { font-size: 18px; }
+    .kbd {
+      display: inline-flex; align-items: center; gap: 0.125rem;
+      padding: 0.125rem 0.375rem; border-radius: 6px;
+      background: var(--surface-container); border: 1px solid var(--border-subtle);
+      font-size: 0.625rem; font-weight: 600; color: var(--on-surface-variant);
+      font-family: 'Inter', monospace; line-height: 1.4;
+    }
+    .pulse-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--status-found); display: inline-block;
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 0.375rem;
+      padding: 0.375rem 0.75rem; border-radius: var(--radius-full);
+      background: var(--status-found-bg); color: var(--status-found);
+      font-size: 0.75rem; font-weight: 600;
+    }
+    .alert-banner { position: relative; overflow: hidden; border-radius: 1rem; }
+    .alert-banner .blur-circle {
+      position: absolute; border-radius: 50%; pointer-events: none;
+    }
+    .sort-select {
+      appearance: none; -webkit-appearance: none; cursor: pointer;
+      padding: 0.5rem 2rem 0.5rem 0.75rem; border-radius: 10px;
+      background: var(--surface-container-low); color: var(--on-surface);
+      font-size: 0.75rem; font-weight: 600; border: 1px solid var(--border-subtle);
+      transition: all 0.2s ease; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23464554' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 0.5rem center;
+    }
+    .sort-select:focus { border-color: var(--primary); outline: none; }
+    .filter-dropdown {
+      appearance: none; -webkit-appearance: none; cursor: pointer;
+      padding: 0.5rem 2rem 0.5rem 0.75rem; border-radius: 10px;
+      background: var(--surface-container-low); color: var(--on-surface-variant);
+      font-size: 0.75rem; font-weight: 600; border: 1px solid transparent;
+      transition: all 0.2s ease; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23464554' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 0.5rem center;
+    }
+    .filter-dropdown:focus { border-color: var(--primary); outline: none; background-color: var(--surface-card); }
+    @media (max-width: 767px) {
+      .filter-dropdown { flex: 1; min-width: 0; }
+    }
+  </style>
+<script>
+    (function(){try{var t=localStorage.getItem('foubdly-theme');var s=(t==='light'||t==='dark')?t:(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',s);if('style' in document.documentElement&&'colorScheme' in document.documentElement.style)document.documentElement.style.colorScheme=s;}catch(e){}})();
+  </script>
+  <link rel="icon" type="image/svg+xml" href="assets/images/icons/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/icons/favicon-32x32.png">
+  <link rel="apple-touch-icon" href="assets/images/icons/apple-touch-icon.png">
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="header-logo">
+        <div class="header-logo-icon">
+          <span class="material-symbols-outlined" style="font-size:20px">explore</span>
+        </div>
+        <div>
+          <div class="header-logo-text">Campus Found</div>
+          <div class="header-logo-sub">Lost &amp; Found Portal</div>
+        </div>
+      </a>
+      <nav class="header-nav" id="mainNav">
+        <a href="index.html">Home</a>
+        <a href="browse.html" class="active">Browse Items</a>
+        <a href="report-lost.html">Report Lost</a>
+        <a href="report-found.html">Report Found</a>
+        <a href="browse.html">Alerts</a>
+      </nav>
+      <div class="header-actions">
+        <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch to dark mode" aria-pressed="false" title="Switch to dark mode">
+          <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+          </svg>
+          <span class="theme-toggle__track" aria-hidden="true"></span>
+          <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+        <a href="sign-in.html" class="btn btn-ghost btn-sm max-sm:hidden">Sign In</a>
+        <a href="sign-in.html" class="btn btn-primary btn-sm max-sm:hidden">Get Started</a>
+        <button class="header-hamburger" aria-label="Toggle menu">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== PAGE CONTENT ===== -->
+  <main>
+    <div class="container">
+
+      <!-- Breadcrumb & Live Status -->
+      <section class="pt-lg pb-sm" style="padding-top: var(--space-lg); padding-bottom: var(--space-sm);">
+        <div class="flex items-center justify-between flex-wrap gap-sm">
+          <nav class="breadcrumb">
+            <a href="index.html">Home</a>
+            <span class="material-symbols-outlined" style="font-size:14px;color:var(--outline-variant)">chevron_right</span>
+            <span class="current">Browse Items</span>
+          </nav>
+          <div class="status-pill">
+            <span class="pulse-dot"></span>
+            <span>142 Active Items Listed &bull; Updated 12 mins ago</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Headline Row -->
+      <section class="browse-headline">
+        <div class="flex items-center justify-between flex-wrap gap-lg">
+          <div>
+            <h1 class="font-display-hero">Browse Campus Lost &amp; Found</h1>
+            <p class="font-body-lg text-on-surface-variant mt-1" style="margin-top: 0.375rem; max-width: 520px;">Search, filter, and track claimed and unclaimed items across all campus zones in real time.</p>
+          </div>
+          <div class="flex gap-sm flex-wrap">
+            <a href="report-lost.html" class="btn btn-outline">
+              <span class="material-symbols-outlined" style="font-size:18px">add</span>
+              Report Lost Item
+            </a>
+            <a href="report-found.html" class="btn btn-primary">
+              <span class="material-symbols-outlined" style="font-size:18px">add</span>
+              Report Found Item
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Search & Filter Bar -->
+      <section class="card-static p-md mt-lg" style="margin-top: var(--space-lg);">
+        <div class="flex flex-col gap-md">
+          <!-- Search Input -->
+          <div class="search-input-wrap" style="border-radius: 14px; padding: 0.625rem 1rem;">
+            <span class="material-symbols-outlined text-outline" style="font-size:20px">search</span>
+            <input type="text" id="browseSearch" placeholder="Search by keywords, serial code, model, color, brand, or building..." style="font-size: 0.875rem; flex: 1;">
+            <button class="search-clear" id="searchClear" title="Clear search" style="display:none;">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+            <span class="kbd"><span id="kbdMod">&#8984;</span>K</span>
+          </div>
+
+          <!-- Filter Row -->
+          <div class="flex items-center flex-wrap gap-sm">
+            <!-- Type Segmented Toggle -->
+            <div class="filter-segment" id="typeFilter">
+              <button class="active" data-count="142">All <span style="opacity:0.7;margin-left:2px">142</span></button>
+              <button data-count="84">Lost <span style="opacity:0.7;margin-left:2px">84</span></button>
+              <button data-count="58">Found <span style="opacity:0.7;margin-left:2px">58</span></button>
+            </div>
+
+            <!-- Category Dropdown -->
+            <select class="filter-dropdown" id="categoryFilter">
+              <option value="" disabled selected>Category</option>
+              <option>Electronics</option>
+              <option>Accessories</option>
+              <option>Documents &amp; IDs</option>
+              <option>Keys &amp; Keychains</option>
+              <option>Books &amp; Notebooks</option>
+              <option>Clothing</option>
+              <option>Bags &amp; Cases</option>
+              <option>Other</option>
+            </select>
+
+            <!-- Campus Zone Dropdown -->
+            <select class="filter-dropdown" id="zoneFilter">
+              <option value="" disabled selected>Campus Zone</option>
+              <option>Science Building (SB)</option>
+              <option>Library Complex</option>
+              <option>Student Union</option>
+              <option>Engineering Hall</option>
+              <option>Arts Center</option>
+              <option>Admin Building</option>
+              <option>Residence Halls</option>
+              <option>Athletic Center</option>
+              <option>Campus Green</option>
+            </select>
+
+            <!-- Date Range Dropdown -->
+            <select class="filter-dropdown" id="dateFilter">
+              <option value="" disabled selected>Date Range</option>
+              <option>Today</option>
+              <option>Last 3 Days</option>
+              <option>This Week</option>
+              <option>This Month</option>
+              <option>Last 30 Days</option>
+              <option>Custom Range</option>
+            </select>
+
+            <!-- Custody Status Dropdown -->
+            <select class="filter-dropdown" id="custodyFilter">
+              <option value="" disabled selected>Custody Status</option>
+              <option>Vault Checked In</option>
+              <option>Front Desk Hold</option>
+              <option>Bulletin Board</option>
+              <option>Police Custody</option>
+              <option>Pending Verification</option>
+            </select>
+
+            <!-- Sort Dropdown -->
+            <select class="sort-select" id="sortSelect">
+              <option>Most Recent</option>
+              <option>Most Viewed</option>
+              <option>Nearest Location</option>
+              <option>Reward Value</option>
+              <option>Urgency</option>
+            </select>
+
+            <!-- View Toggle -->
+            <div class="view-toggle flex gap-xs" style="margin-left: auto;">
+              <button class="active" id="viewGrid" title="Grid view">
+                <span class="material-symbols-outlined" style="font-size:18px">grid_view</span>
+              </button>
+              <button id="viewList" title="List view">
+                <span class="material-symbols-outlined" style="font-size:18px">view_list</span>
+              </button>
+              <button id="viewMap" title="Map view">
+                <span class="material-symbols-outlined" style="font-size:18px">map</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Active Filter Chips -->
+          <div class="flex flex-wrap gap-sm" id="activeFilters">
+            <div class="filter-chip">
+              <span>All Types</span>
+              <span class="material-symbols-outlined">close</span>
+            </div>
+            <div class="filter-chip">
+              <span>Most Recent</span>
+              <span class="material-symbols-outlined">close</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Results Summary -->
+      <section class="pt-lg" style="padding-top: var(--space-lg);">
+        <div class="flex items-center justify-between flex-wrap gap-sm mb-md">
+          <div class="flex items-center gap-md flex-wrap">
+            <span class="font-label-lg">Showing 1&ndash;9 of 142 items</span>
+            <div class="flex items-center gap-xs text-status-verified" style="font-size:0.75rem;font-weight:600;">
+              <span class="material-symbols-outlined" style="font-size:14px">sync</span>
+              Custodial Records Sync On
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-sm mb-lg">
+          <span style="font-size:0.75rem;font-weight:600;color:var(--on-surface-variant);padding-top:0.375rem;">Popular:</span>
+          <button class="popular-pill popular-search" data-term="AirPods">
+            <span class="material-symbols-outlined">trending_up</span>
+            AirPods
+          </button>
+          <button class="popular-pill popular-search" data-term="Hydro Flask">
+            <span class="material-symbols-outlined">trending_up</span>
+            Hydro Flask
+          </button>
+          <button class="popular-pill popular-search" data-term="MacBook Charger">
+            <span class="material-symbols-outlined">trending_up</span>
+            MacBook Charger
+          </button>
+          <button class="popular-pill popular-search" data-term="Student ID">
+            <span class="material-symbols-outlined">trending_up</span>
+            Student ID
+          </button>
+          <button class="popular-pill popular-search" data-term="Car Keys">
+            <span class="material-symbols-outlined">trending_up</span>
+            Car Keys
+          </button>
+        </div>
+      </section>
+
+      <!-- ===== ITEM GRID ===== -->
+      <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-lg pb-2xl" style="gap: var(--space-lg); padding-bottom: var(--space-2xl);">
+
+        <!-- Card 1: Apple AirPods Pro -->
+        <article class="item-card card">
+          <div class="card-image aspect-[16/10]">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGwEoCK0iP1144foQiMLDNXlKCFXlVLzqOC42fIf2z0wxLfrD8sEYTNHADelW5ow65fjV2e0xi8zlWm7qUvclG3-b8wzinj6KdUGhT32yXKqJkPGu0iDdvqvkf-ap92tXpGxTEVqwJ9o8Yqly3x3RdWw8sL9h46gMyG35cm5vZWuGNnI1qalPW5Za2tjnd_rSok0qzUDUcyrgLK1Z8aK08J74YciQoK4FY8vsZXfE" alt="Apple AirPods Pro found on campus" class="w-full h-full object-cover">
+            <span class="status-badge badge badge-found">FOUND</span>
+            <span class="secondary-badge badge badge-verified">Vault Checked</span>
+            <div class="custody-bar custody-vault">
+              <span class="material-symbols-outlined" style="font-size:12px;vertical-align:-1px">lock</span>
+              In Custody: Vault #14
+            </div>
+          </div>
+          <div class="p-md flex flex-col gap-sm">
+            <div class="flex items-center justify-between">
+              <span class="badge badge-found-soft font-label-sm">Electronics</span>
+              <span class="font-body-sm text-outline" style="font-size:0.6875rem">2 hours ago</span>
+            </div>
+            <h3 class="font-headline-sm line-clamp-1">Apple AirPods Pro</h3>
+            <p class="font-body-sm text-on-surface-variant line-clamp-2">Found near Science Building entrance. White case with small scratch on lid. Serial number available for verification.</p>
+            <div class="flex items-center gap-xs text-outline" style="font-size:0.75rem">
+              <span class="material-symbols-outlined" style="font-size:14px">location_on</span>
+              Science Building (SB) &mdash; Room 102
+            </div>
+            <a href="browse.html" class="btn btn-primary btn-sm mt-2" style="margin-top: 0.5rem;">
+              <span class="material-symbols-outlined" style="font-size:16px">verified_user</span>
+              Claim Item (Verify Serial)
+            </a>
+          </div>
+        </article>
+
+        <!-- Card 2: TI-84 Plus CE Calculator -->
+        <article class="item-card card">
+          <div class="card-image aspect-[16/10]">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtKtBYTQiBRflXCilE6JhMhvF6fWBA0BrY2kKV1VxyOXEnz9UnS56yViqrtvFszp8VRoyJKGoFlX5GAxWoE7mQY4VihBKWPNIRm3f7LIjSupDV5UfbFZ91B8E0oszfRvk1tohtJ1-UmimROc1FCpQ2GoZyPc44-zne5k8_Hp-HDbgIKZDO8tve5mYYphyLmBOwcTsrWDMpyj-pTCd5Yfy7se80sLsJDeYCR1FVvx4" alt="TI-84 Plus CE Calculator lost on campus" class="w-full h-full object-cover">
+            <span class="status-badge badge badge-lost">LOST</span>
+            <span class="secondary-badge badge badge-lost-soft" style="background:#FEE2E2;color:#B91C1C;font-size:0.625rem">
+              <span class="material-symbols-outlined" style="font-size:12px">priority_high</span>
+              Urgent
+            </span>
+          </div>
+          <div class="p-md flex flex-col gap-sm">
+            <div class="flex items-center justify-between">
+              <span class="badge badge-lost-soft font-label-sm">Electronics</span>
+              <span class="font-body-sm text-outline" style="font-size:0.6875rem">5 hours ago</span>
+            </div>
+            <h3 class="font-headline-sm line-clamp-1">TI-84 Plus CE Calculator</h3>
+            <p class="font-body-sm text-on-surface-variant line-clamp-2">Black graphing calculator with a blue rubber grip. Lost during midterm exam. Contains unsaved class notes. Reward offered.</p>
+            <div class="flex items-center gap-xs text-outline" style="font-size:0.75rem">
+              <span class="material-symbols-outlined" style="font-size:14px">location_on</span>
+              Library Complex &mdash; Study Room 3B
+            </div>
+            <a href="browse.html" class="btn btn-lost btn-sm mt-2" style="margin-top: 0.5rem;">
+              <span class="material-symbols-outlined" style="font-size:16px">handshake</span>
+              I Found This / Contact Owner
+            </a>
+          </div>
+        </article>
+
+        <!-- Card 3: Student ID & Keycard -->
+        <article class="item-card card">
+          <div class="card-image aspect-[16/10]">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAENynpPGjsCsswoM6cch0SUpPhjRf4ufWhvT0DgVTDvE2eEPgA8hOXDHuJuUpDO5qdyVEqGEJG-2pvs6cgu1zAN1NXjzMz3O8wFwt9jw3UdfOwpQtbOpP4DRCVOLAt9avSdQGq--ig5KkYtDelOS1Rul8Hcm-czJDQnY0fmC_J9DN8JZu7CdAD_5gHnxT422AcVUQrsMtDoUUBx584N1aA0fWgBhAuPYhHouyD6_I" alt="Student ID and keycard found on campus" class="w-full h-full object-cover">
+            <span class="status-badge badge badge-found">FOUND</span>
+            <span class="secondary-badge badge badge-verified">
+              <span class="material-symbols-outlined" style="font-size:12px">verified</span>
+              Verified ID
+            </span>
+          </div>
+          <div class="p-md flex flex-col gap-sm">
+            <div class="flex items-center justify-between">
+              <span class="badge badge-found-soft font-label-sm">Documents &amp; IDs</span>
+              <span class="font-body-sm text-outline" style="font-size:0.6875rem">Yesterday</span>
+            </div>
+            <h3 class="font-headline-sm line-clamp-1">Student ID &amp; Keycard</h3>
+            <p class="font-body-sm text-on-surface-variant line-clamp-2">Lanyard with student ID card and building access keycard. Name visible. Found at Student Union cafe seating area.</p>
+            <div class="flex items-center gap-xs text-outline" style="font-size:0.75rem">
+              <span class="material-symbols-outlined" style="font-size:14px">location_on</span>
+              Student Union &mdash; Cafe Floor
+            </div>
+            <a href="browse.html" class="btn btn-primary btn-sm mt-2" style="margin-top: 0.5rem;">
+              <span class="material-symbols-outlined" style="font-size:16px">badge</span>
+              Claim with Matching ID
+            </a>
+          </div>
+        </article>
+
+        <!-- Card 4: Dell XPS 130W Charger -->
+        <article class="item-card card">
+          <div class="card-image aspect-[16/10]">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAy2cYLMJ9AUTVQB4YZBYIXly5abI7WWLuG0lTKEhVbYwTb6EkKAS_Fny6F4Gx0EpsIQbpO77TZYQ1G5CrDsUxl-AYg3n3tYWNA-sDh4BQmI4LZO7fAYwRkQYhAMQOMabWEqyHHsG0PHTc5p1tJEvlfV1YRm61tZqTjMpIL4sukRcDOud8pt1YKnzgG__EV84FnQOCq4OStlgU84UBto6jRNQXSGfB3QE377HPmYGs" alt="Dell XPS charger found on campus" class="w-full h-full object-cover">
+            <span class="status-badge badge badge-found">FOUND</span>
+          </div>
+          <div class="p-md flex flex-col gap-sm">
+            <div class="flex items-center justify-between">
+              <span class="badge badge-found-soft font-label-sm">Electronics</span>
+              <span class="font-body-sm text-outline" style="font-size:0.6875rem">3 days ago</span>
+            </div>
+            <h3 class="font-headline-sm line-clamp-1">Dell XPS 130W Charger</h3>
+            <p class="font-body-sm text-on-surface-variant line-clamp-2">Dell-branded 130W USB-C laptop charger left in a shared outlet. Model HA130NM1A0. Cable intact, no damage.</p>
+            <div class="flex items-center gap-xs text-outline" style="font-size:0.75rem">
+              <span class="material-symbols-outlined" style="font-size:14px">location_on</span>
+              Engineering Hall &mdash; 2nd Floor Lobby
+            </div>
+            <a href="browse.html" class="btn btn-primary btn-sm mt-2" style="margin-top: 0.5rem;">
+              <span class="material-symbols-outlined" style="font-size:16px">inventory_2</span>
+              Claim Item
+            </a>
+          </div>
+        </article>
+
+        <!-- Card 5: Black Leather Wallet -->
+        <article class="item-card card">
+          <div class="card-image aspect-[16/10]">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQwM6FOEBT7tLDAalhcy0Bfk0JsfOVlu_kMbuSE5Ft6ffX6azY530NHIfNQbzGpzlxy94gn-ppGHWVUoAMzEoI_7Obh3BHvmNMtKoJ1lEdhi-_c3bb1De0_FysLebMoe2yv85Cmbz6S0tYbdv6Y5FHuvxwVqHWP6_8ECzOoLKKvG34sjjRK3VgBHQ54N__VcEuo_1bepd4B9PqdSZh2tF0Yx98WSd16Nh_WIMS5g0" alt="Black leather wallet lost on campus" class="w-full h-full object-cover">
+            <span class="status-badge badge badge-lost">LOST</span>
+            <span class="secondary-badge badge" style="background:#FEF3C7;color:#92400E;font-size:0.625rem;font-weight:700;letter-spacing:0.04em">
+              <span class="material-symbols-outlined" style="font-size:12px">parcels</span>
+              $30 Reward
+            </span>
+          </div>
+          <div class="p-md flex flex-col gap-sm">
+            <div class="flex items-center justify-between">
+              <span class="badge badge-lost-soft font-label-sm">Accessories</span>
+              <span class="font-body-sm text-outline" style="font-size:0.6875rem">6 hours ago</span>
+            </div>
+            <h3 class="font-headline-sm line-clamp-1">Black Leather Wallet</h3>
+            <p class="font-body-sm text-on-surface-variant line-clamp-2">Genuine leather bifold wallet with card slots. May contain student ID and debit card. Offering reward for safe return.</p>
+            <div class="flex items-center gap-xs text-outline" style="font-size:0.75rem">
+              <span class="material-symbols-outlined" style="font-size:14px">location_on</span>
+              Campus Green &mdash; East Path Bench
+            </div>
+            <a href="browse.html" class="btn btn-lost btn-sm mt-2" style="margin-top: 0.5rem;">
+              <span class="material-symbols-outlined" style="font-size:16px">add_location</span>
+              I Found This / Report Location
+            </a>
+          </div>
+        </article>
+
+        <!-- Card 6: Hydro Flask 32oz -->
+        <article class="item-card card">
+          <div class="card-image aspect-[16/10]">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaVmY_nkOGENJNGe0oIyp0OYUI6jbZDSEBrXW43b4yylOKC8ZpAkya_tv1T7Hj9-f-BHqG5VF-5Tg7xtyOEVIkSz5Q_FcA2hu95D0fBc8kglknpCuLxGLW-ui7F9K3eCq342myU3gKyCZnkT5Q7rwRDmZuzLrypqLITiK3EtQoEjwzAZBJdlJlLZ_w5fyokf5dt_uHFRGpIrQ9KEFT4NQtG3sdOwx852DLYajWPlA" alt="Hydro Flask found on campus" class="w-full h-full object-cover">
+            <span class="status-badge badge badge-found">FOUND</span>
+          </div>
+          <div class="p-md flex flex-col gap-sm">
+            <div class="flex items-center justify-between">
+              <span class="badge badge-found-soft font-label-sm">Accessories</span>
+              <span class="font-body-sm text-outline" style="font-size:0.6875rem">1 day ago</span>
+            </div>
+            <h3 class="font-headline-sm line-clamp-1">Hydro Flask 32oz</h3>
+            <p class="font-body-sm text-on-surface-variant line-clamp-2">Navy blue Hydro Flask water bottle, 32oz wide mouth with straw lid. Has a few stickers on it. Left in lecture hall.</p>
+            <div class="flex items-center gap-xs text-outline" style="font-size:0.75rem">
+              <span class="material-symbols-outlined" style="font-size:14px">location_on</span>
+              Arts Center &mdash; Auditorium Row 12
+            </div>
+            <a href="browse.html" class="btn btn-primary btn-sm mt-2" style="margin-top: 0.5rem;">
+              <span class="material-symbols-outlined" style="font-size:16px">inventory_2</span>
+              Claim Item
+            </a>
+          </div>
+        </article>
+
+        <!-- Card 7: Ray-Ban Wayfarer Sunglasses -->
+        <article class="item-card card">
+          <div class="card-image aspect-[16/10]">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBamf5Zee1gN8nQVPRaxtqQPQ055AIgwQDlNHl7Sekqhok1tSJ3qFEqE_ApyXyCnx03_lxRTTqhWaIjhAGIgtY4_JUepclOWrTyT8fdKyC_mjioZOU2j-1GWr0CUFwExjRmzikxMM_dvi3hobWB8EtotSIkOwsSJ44_8ITb_EoSSry412evDQ82KplSkB3rF0F9-RcXsbfICgPlm0WfRGGd8UcDo6PfeqHmruUkjP8" alt="Ray-Ban Wayfarer sunglasses lost on campus" class="w-full h-full object-cover">
+            <span class="status-badge badge badge-lost">LOST</span>
+          </div>
+          <div class="p-md flex flex-col gap-sm">
+            <div class="flex items-center justify-between">
+              <span class="badge badge-lost-soft font-label-sm">Accessories</span>
+              <span class="font-body-sm text-outline" style="font-size:0.6875rem">2 days ago</span>
+            </div>
+            <h3 class="font-headline-sm line-clamp-1">Ray-Ban Wayfarer Sunglasses</h3>
+            <p class="font-body-sm text-on-surface-variant line-clamp-2">Classic black Wayfarer sunglasses with polarized lenses. May have been left near outdoor seating. Slight scratch on left arm.</p>
+            <div class="flex items-center gap-xs text-outline" style="font-size:0.75rem">
+              <span class="material-symbols-outlined" style="font-size:14px">location_on</span>
+              Student Union &mdash; Patio Area
+            </div>
+            <a href="browse.html" class="btn btn-lost btn-sm mt-2" style="margin-top: 0.5rem;">
+              <span class="material-symbols-outlined" style="font-size:16px">visibility</span>
+              I Found This
+            </a>
+          </div>
+        </article>
+
+        <!-- Card 8: Dorm Keyring & Bike U-Lock Key -->
+        <article class="item-card card">
+          <div class="card-image aspect-[16/10]">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtcr3_eNgL5HcWZiSIV8pLr-gSewn3DAFpozt_QIlRS81l3X64MQLWmjsQAMo_W8_HxYT8K0E4cH-JzmLkRXcSX20cfBK59BRtfgiCnmCWRFUqzPTUDEFQ4iiyXl1K4_5e31AdxDq6asm9Dz1WgPbyQA8BSvgmrHvuqflUqFCXcaPnC4l5qyOx51OhxVU0vwz-3Eo5AefIAnYeFJ2lE6VeuWO6_UBguv0oUGG628U" alt="Dorm keyring and bike U-lock key found" class="w-full h-full object-cover">
+            <span class="status-badge badge badge-found">FOUND</span>
+          </div>
+          <div class="p-md flex flex-col gap-sm">
+            <div class="flex items-center justify-between">
+              <span class="badge badge-found-soft font-label-sm">Keys &amp; Keychains</span>
+              <span class="font-body-sm text-outline" style="font-size:0.6875rem">4 hours ago</span>
+            </div>
+            <h3 class="font-headline-sm line-clamp-1">Dorm Keyring &amp; Bike U-Lock Key</h3>
+            <p class="font-body-sm text-on-surface-variant line-clamp-2">Silver keyring with 3 keys and a small campus bulldog keychain. Includes dorm room key and bike U-lock key.</p>
+            <div class="flex items-center gap-xs text-outline" style="font-size:0.75rem">
+              <span class="material-symbols-outlined" style="font-size:14px">location_on</span>
+              Residence Halls &mdash; West Wing Lobby
+            </div>
+            <a href="browse.html" class="btn btn-primary btn-sm mt-2" style="margin-top: 0.5rem;">
+              <span class="material-symbols-outlined" style="font-size:16px">key</span>
+              Claim with Key Match
+            </a>
+          </div>
+        </article>
+
+        <!-- Card 9: Organic Chemistry Textbook -->
+        <article class="item-card card">
+          <div class="card-image aspect-[16/10]">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNfVDNtPacrh01_kl737Iver2a2ydJLyF6d-p4cYOsCEfB8BDa9V-pQ3IpeRouTM1kLM0SPDfkm7MXMVZ_EU0bbIGeZM6a0d9VBTwR6LJWMOPUT8h070RTzG0TQFRGyIMMjtwyu91HI4LFhp8dqcWkXK_PrFriLQOHfQsL_30u-rB9M6z5-eZ9W9X4dCPG-RNffqb1gfRHjyeyaSbwqp185-hsfgvnAiL0g_0snMk" alt="Organic Chemistry textbook lost on campus" class="w-full h-full object-cover">
+            <span class="status-badge badge badge-lost">LOST</span>
+          </div>
+          <div class="p-md flex flex-col gap-sm">
+            <div class="flex items-center justify-between">
+              <span class="badge badge-lost-soft font-label-sm">Books &amp; Notebooks</span>
+              <span class="font-body-sm text-outline" style="font-size:0.6875rem">1 day ago</span>
+            </div>
+            <h3 class="font-headline-sm line-clamp-1">Organic Chemistry Textbook</h3>
+            <p class="font-body-sm text-on-surface-variant line-clamp-2">Clayden, Greeves, Warren textbook. Hardcover with yellow spine. Has handwritten notes and bookmarks inside from Chem 301.</p>
+            <div class="flex items-center gap-xs text-outline" style="font-size:0.75rem">
+              <span class="material-symbols-outlined" style="font-size:14px">location_on</span>
+              Science Building (SB) &mdash; Lecture Hall A
+            </div>
+            <a href="browse.html" class="btn btn-lost btn-sm mt-2" style="margin-top: 0.5rem;">
+              <span class="material-symbols-outlined" style="font-size:16px">visibility</span>
+              I Found This
+            </a>
+          </div>
+        </article>
+
+      </section>
+
+      <!-- ===== PAGINATION ===== -->
+      <section class="flex items-center justify-center flex-col gap-md pb-2xl" style="padding-bottom: var(--space-2xl);">
+        <span class="font-body-sm text-on-surface-variant">Showing page 1 of 12</span>
+        <div class="pagination">
+          <button class="page-btn" disabled aria-label="Previous page">
+            <span class="material-symbols-outlined" style="font-size:18px">chevron_left</span>
+          </button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn" style="width:auto;padding:0 0.25rem;font-size:0.875rem;cursor:default;">...</button>
+          <button class="page-btn">12</button>
+          <button class="page-btn" aria-label="Next page">
+            <span class="material-symbols-outlined" style="font-size:18px">chevron_right</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ===== ALERT BANNER ===== -->
+      <section class="pb-2xl" style="padding-bottom: var(--space-2xl);">
+        <div class="alert-banner bg-inverse-surface relative" style="padding: var(--space-xl) var(--space-xl); overflow:hidden;">
+          <!-- Decorative blur circles -->
+          <div class="blur-circle" style="width:180px;height:180px;background:rgba(96,99,238,0.25);top:-50px;left:-30px;"></div>
+          <div class="blur-circle" style="width:120px;height:120px;background:rgba(109,40,217,0.2);bottom:-40px;right:60px;"></div>
+          <div class="blur-circle" style="width:80px;height:80px;background:rgba(134,242,228,0.15);top:20px;right:-10px;"></div>
+
+          <div class="relative z-10 flex items-center justify-between flex-wrap gap-lg">
+            <div style="max-width:540px;">
+              <h2 class="font-headline-lg text-inverse-on-surface">Can't find what you're looking for?</h2>
+              <p class="font-body-md text-inverse-on-surface opacity-75 mt-2" style="margin-top:0.5rem;">Set up an asset watch alert. We'll automatically notify you when a matching item is reported across any campus zone or custodial desk.</p>
+            </div>
+            <div class="flex gap-sm flex-wrap shrink-0">
+              <a href="browse.html" class="btn btn-primary btn-pill btn-lg">
+                <span class="material-symbols-outlined" style="font-size:18px">notifications_active</span>
+                Create Item Alert
+              </a>
+              <a href="browse.html" class="btn btn-lg btn-pill" style="background:rgba(255,255,255,0.12);color:var(--inverse-on-surface);border:1px solid rgba(255,255,255,0.2);">
+                <span class="material-symbols-outlined" style="font-size:18px">help_outline</span>
+                Learn Verification Steps
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <!-- Col 1 -->
+        <div>
+          <div class="flex items-center gap-sm mb-md">
+            <div class="header-logo-icon" style="width:32px;height:32px;border-radius:8px;">
+              <span class="material-symbols-outlined" style="font-size:18px">explore</span>
+            </div>
+            <span class="font-headline-sm">Campus Found</span>
+          </div>
+          <p class="font-body-sm text-on-surface-variant" style="max-width:260px;">The official lost and found portal for your campus community. Reconnecting students with their belongings.</p>
+        </div>
+        <!-- Col 2 -->
+        <div>
+          <h4 class="font-label-md uppercase tracking-wider text-on-surface-variant mb-md" style="margin-bottom:0.75rem;">Quick Links</h4>
+          <div class="flex flex-col gap-sm">
+            <a href="browse.html" class="font-body-sm text-on-surface-variant hover:text-primary transition-colors">Browse Items</a>
+            <a href="report-lost.html" class="font-body-sm text-on-surface-variant hover:text-primary transition-colors">Report Lost</a>
+            <a href="report-found.html" class="font-body-sm text-on-surface-variant hover:text-primary transition-colors">Report Found</a>
+            <a href="browse.html" class="font-body-sm text-on-surface-variant hover:text-primary transition-colors">Set Alerts</a>
+          </div>
+        </div>
+        <!-- Col 3 -->
+        <div>
+          <h4 class="font-label-md uppercase tracking-wider text-on-surface-variant mb-md" style="margin-bottom:0.75rem;">Resources</h4>
+          <div class="flex flex-col gap-sm">
+            <a href="browse.html" class="font-body-sm text-on-surface-variant hover:text-primary transition-colors">Help Center</a>
+            <a href="sign-in.html" class="font-body-sm text-on-surface-variant hover:text-primary transition-colors">Verification Guide</a>
+            <a href="admin.html" class="font-body-sm text-on-surface-variant hover:text-primary transition-colors">Custody Policy</a>
+            <a href="browse.html" class="font-body-sm text-on-surface-variant hover:text-primary transition-colors">Campus Map</a>
+          </div>
+        </div>
+        <!-- Col 4 -->
+        <div>
+          <h4 class="font-label-md uppercase tracking-wider text-on-surface-variant mb-md" style="margin-bottom:0.75rem;">Contact</h4>
+          <div class="flex flex-col gap-sm">
+            <div class="flex items-center gap-sm font-body-sm text-on-surface-variant">
+              <span class="material-symbols-outlined" style="font-size:16px">mail</span>
+              found@campus.edu
+            </div>
+            <div class="flex items-center gap-sm font-body-sm text-on-surface-variant">
+              <span class="material-symbols-outlined" style="font-size:16px">phone</span>
+              (555) 123-4567
+            </div>
+            <div class="flex items-center gap-sm font-body-sm text-on-surface-variant">
+              <span class="material-symbols-outlined" style="font-size:16px">location_on</span>
+              Admin Building, Room 204
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Campus Found. All rights reserved.</span>
+      <div class="flex gap-md">
+        <a href="index.html" class="hover:text-primary transition-colors">Privacy Policy</a>
+        <a href="index.html" class="hover:text-primary transition-colors">Terms of Service</a>
+        <a href="index.html" class="hover:text-primary transition-colors">Accessibility</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js?v=20260929"></script>
+  <script>
+    (function() {
+      'use strict';
+
+      // --- Detect OS for keyboard shortcut badge ---
+      var isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+      var kbdMod = document.getElementById('kbdMod');
+      if (kbdMod) kbdMod.textContent = isMac ? '\u2318' : 'Ctrl+';
+
+      // --- Search input clear button ---
+      var searchInput = document.getElementById('browseSearch');
+      var searchClear = document.getElementById('searchClear');
+      if (searchInput && searchClear) {
+        searchInput.addEventListener('input', function() {
+          searchClear.style.display = this.value.length > 0 ? 'inline-flex' : 'none';
+        });
+        searchClear.addEventListener('click', function() {
+          searchInput.value = '';
+          searchClear.style.display = 'none';
+          searchInput.focus();
+        });
+      }
+
+      // --- Ctrl/Cmd + K keyboard shortcut ---
+      document.addEventListener('keydown', function(e) {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+          e.preventDefault();
+          if (searchInput) {
+            searchInput.focus();
+            searchInput.select();
+          }
+        }
+      });
+
+      // --- Type filter segmented toggle ---
+      var typeFilter = document.getElementById('typeFilter');
+      if (typeFilter) {
+        typeFilter.querySelectorAll('button').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            typeFilter.querySelectorAll('button').forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+          });
+        });
+      }
+
+      // --- Popular search pills ---
+      document.querySelectorAll('.popular-search').forEach(function(pill) {
+        pill.addEventListener('click', function() {
+          var term = pill.getAttribute('data-term');
+          if (searchInput && term) {
+            searchInput.value = term;
+            searchInput.focus();
+            if (searchClear) searchClear.style.display = 'inline-flex';
+          }
+        });
+      });
+
+      // --- Filter chip dismiss ---
+      document.querySelectorAll('#activeFilters .filter-chip').forEach(function(chip) {
+        chip.addEventListener('click', function() {
+          chip.remove();
+        });
+      });
+
+      // --- View toggle ---
+      var viewBtns = document.querySelectorAll('.view-toggle button');
+      viewBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          viewBtns.forEach(function(b) { b.classList.remove('active'); });
+          btn.classList.add('active');
+        });
+      });
+
+      // --- Pagination ---
+      document.querySelectorAll('.page-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          if (btn.disabled || btn.textContent.trim() === '...') return;
+          document.querySelectorAll('.page-btn').forEach(function(b) { b.classList.remove('active'); });
+          btn.classList.add('active');
+        });
+      });
+
+    })();
+  </script>
+
+</body>
+</html>

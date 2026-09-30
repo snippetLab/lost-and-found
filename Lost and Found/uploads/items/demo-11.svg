@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500" role="img" aria-label="Running sports shoe">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fdf0f0"/>
+      <stop offset="0.55" stop-color="#ecebf8"/>
+      <stop offset="1" stop-color="#eef7fb"/>
+    </linearGradient>
+    <linearGradient id="sole" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#e2e8f0"/>
+      <stop offset="1" stop-color="#cbd5e1"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#bg)"/>
+  <circle cx="160" cy="120" r="72" fill="#ef4444" opacity="0.10"/>
+  <circle cx="680" cy="420" r="86" fill="#4648d4" opacity="0.10"/>
+  <ellipse cx="400" cy="412" rx="230" ry="30" fill="#4648d4" opacity="0.10"/>
+  <g transform="rotate(-8 400 300)">
+    <path d="M250 368 Q280 322 360 322 Q430 322 470 352 Q520 390 540 392 L250 392 Z" fill="url(#sole)"/>
+    <path d="M250 368 Q280 318 368 318 Q450 318 500 372 Z" fill="#ef4444"/>
+    <path d="M250 368 Q300 306 380 306 Q470 306 520 388 Z" fill="#dc2626"/>
+    <path d="M300 330 L322 298 Q334 286 352 292 L344 356 Z" fill="#f87171"/>
+    <path d="M356 292 L400 286 L396 356 L360 352 Z" fill="#fca5a5" opacity="0.9"/>
+    <rect x="430" y="322" width="14" height="22" rx="7" fill="#ffffff"/>
+    <rect x="452" y="340" width="12" height="18" rx="6" fill="#ffffff"/>
+    <rect x="470" y="352" width="11" height="16" rx="6" fill="#ffffff"/>
+    <rect x="252" y="366" width="30" height="12" rx="6" fill="#fecaca"/>
+  </g>
+</svg>

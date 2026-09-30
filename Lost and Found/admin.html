@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Custody Portal - Campus Lost and Found</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=20260929">
+<script>
+    (function(){try{var t=localStorage.getItem('foubdly-theme');var s=(t==='light'||t==='dark')?t:(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',s);if('style' in document.documentElement&&'colorScheme' in document.documentElement.style)document.documentElement.style.colorScheme=s;}catch(e){}})();
+  </script>
+  <link rel="icon" type="image/svg+xml" href="assets/images/icons/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/icons/favicon-32x32.png">
+  <link rel="apple-touch-icon" href="assets/images/icons/apple-touch-icon.png">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header__inner container">
+      <a href="index.html" class="header__logo">
+        <span class="material-symbols-outlined">school</span>
+        <span class="header__brand">Campus L&F</span>
+      </a>
+      <nav class="header__nav">
+        <a href="index.html" class="header__nav-link">Home</a>
+        <a href="report-lost.html" class="header__nav-link">Report Lost</a>
+        <a href="report-found.html" class="header__nav-link">Report Found</a>
+        <a href="browse.html" class="header__nav-link">Track Items</a>
+        <a href="admin.html" class="header__nav-link header__nav-link--active">Admin Portal</a>
+      </nav>
+      <div class="header__actions">
+        <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch to dark mode" aria-pressed="false" title="Switch to dark mode">
+          <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+          </svg>
+          <span class="theme-toggle__track" aria-hidden="true"></span>
+          <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+        <button class="header__icon-btn" aria-label="Notifications">
+          <span class="material-symbols-outlined">notifications</span>
+          <span class="header__badge">5</span>
+        </button>
+        <button class="header__icon-btn header__avatar" aria-label="Profile">
+          <span class="material-symbols-outlined">shield_person</span>
+        </button>
+        <button class="header__menu-btn" aria-label="Menu">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Officer Subheader -->
+  <section class="subheader bg-surface-container-low">
+    <div class="subheader__inner container">
+      <div class="subheader__left">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="index.html" class="breadcrumb__link">Home</a>
+          <span class="breadcrumb__sep">&rsaquo;</span>
+          <span class="breadcrumb__link">Campus Operations</span>
+          <span class="breadcrumb__sep">&rsaquo;</span>
+          <span class="breadcrumb__current">Admin Custody Portal</span>
+        </nav>
+        <div class="officer-info">
+          <div class="officer-info__avatar">
+            <span class="material-symbols-outlined">shield_person</span>
+          </div>
+          <div class="officer-info__details">
+            <div class="officer-info__name">Officer Mark Reynolds <span class="officer-info__id">#8842</span></div>
+            <div class="officer-info__meta">
+              <span class="officer-info__meta-item">
+                <span class="material-symbols-outlined">lock</span>
+                Vault Station: Room 12 Desk <span class="status-badge status-badge--active">Active</span>
+              </span>
+              <span class="officer-info__meta-item">
+                <span class="material-symbols-outlined">schedule</span>
+                Shift End: 18:00 EST
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="subheader__right">
+        <button class="btn btn--primary">
+          <span class="material-symbols-outlined">add_circle</span>
+          Intake New Found Item
+        </button>
+        <button class="btn btn--status-lost">
+          <span class="material-symbols-outlined">gavel</span>
+          Review Claims (12)
+        </button>
+        <button class="btn btn--outlined">
+          <span class="material-symbols-outlined">qr_code_printer</span>
+          Print Vault Barcode
+        </button>
+        <button class="btn btn--outlined">
+          <span class="material-symbols-outlined">download</span>
+          Export Audit
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- KPI Cards -->
+  <section class="kpi-section container">
+    <div class="kpi-grid kpi-grid--4">
+      <!-- KPI 1: Custody Escrow -->
+      <div class="kpi-card">
+        <div class="kpi-card__header">
+          <span class="kpi-card__icon kpi-card__icon--primary">
+            <span class="material-symbols-outlined">inventory_2</span>
+          </span>
+          <span class="kpi-card__trend kpi-card__trend--up">+14 wk</span>
+        </div>
+        <div class="kpi-card__value">248</div>
+        <div class="kpi-card__label">Custody Escrow</div>
+        <div class="kpi-card__breakdown">
+          <span class="kpi-card__breakdown-item">
+            <span class="material-symbols-outlined">lock_vault</span>
+            68 Safe Vault
+          </span>
+          <span class="kpi-card__breakdown-item">
+            <span class="material-symbols-outlined">lock</span>
+            114 Lockers
+          </span>
+          <span class="kpi-card__breakdown-item">
+            <span class="material-symbols-outlined">desk</span>
+            66 Desks
+          </span>
+        </div>
+      </div>
+
+      <!-- KPI 2: Pending Claims -->
+      <div class="kpi-card kpi-card--urgent">
+        <div class="kpi-card__header">
+          <span class="kpi-card__icon kpi-card__icon--warning">
+            <span class="material-symbols-outlined">pending_actions</span>
+          </span>
+          <span class="kpi-card__pulse"></span>
+        </div>
+        <div class="kpi-card__value">19</div>
+        <div class="kpi-card__label">Pending Claims</div>
+        <div class="kpi-card__sub">5 High-Value Items</div>
+      </div>
+
+      <!-- KPI 3: AI Auto-Matches -->
+      <div class="kpi-card">
+        <div class="kpi-card__header">
+          <span class="kpi-card__icon kpi-card__icon--info">
+            <span class="material-symbols-outlined">psychology</span>
+          </span>
+          <span class="kpi-card__trend kpi-card__trend--neutral">96% Accuracy</span>
+        </div>
+        <div class="kpi-card__value">8</div>
+        <div class="kpi-card__label">AI Auto-Matches</div>
+        <div class="kpi-card__sub">Pending human verification</div>
+      </div>
+
+      <!-- KPI 4: Reunited MTD -->
+      <div class="kpi-card">
+        <div class="kpi-card__header">
+          <span class="kpi-card__icon kpi-card__icon--success">
+            <span class="material-symbols-outlined">check_circle</span>
+          </span>
+          <span class="kpi-card__trend kpi-card__trend--up">+23 vs last month</span>
+        </div>
+        <div class="kpi-card__value">102</div>
+        <div class="kpi-card__label">Reunited MTD</div>
+        <div class="kpi-card__sub">Items returned to owners</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <main class="main-content container">
+    <div class="content-grid">
+
+      <!-- Main Area (8 cols) -->
+      <div class="main-area">
+
+        <!-- AI Correlation Banner -->
+        <div class="ai-banner">
+          <div class="ai-banner__icon">
+            <span class="material-symbols-outlined">auto_awesome</span>
+          </div>
+          <div class="ai-banner__content">
+            <h3 class="ai-banner__title">AI Correlation Detected</h3>
+            <p class="ai-banner__desc">
+              <strong>96% match</strong> identified between Lost Report <code>#LR-992</code> and Found Intake <code>#FI-104</code>.
+              AI confidence exceeds threshold for automated suggestion.
+            </p>
+          </div>
+          <div class="ai-banner__actions">
+            <button class="btn btn--white">
+              <span class="material-symbols-outlined">visibility</span>
+              Review Match
+            </button>
+          </div>
+        </div>
+
+        <!-- Claims Verification Table -->
+        <div class="card">
+          <div class="card__header">
+            <div class="card__header-left">
+              <h2 class="card__title">Pending Claim Verifications</h2>
+              <a href="#" class="card__link">View All (19)</a>
+            </div>
+            <div class="card__filters">
+              <button class="filter-tab filter-tab--active">Newest</button>
+              <button class="filter-tab">High Value</button>
+              <button class="filter-tab">Urgent</button>
+            </div>
+          </div>
+          <div class="card__body card__body--flush">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Owner</th>
+                  <th>Trust Score</th>
+                  <th>Evidence</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="data-table__item">
+                      <span class="material-symbols-outlined data-table__item-icon">laptop_mac</span>
+                      <div>
+                        <span class="data-table__item-name">MacBook Pro 14"</span>
+                        <span class="data-table__item-id">Item #FI-101</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="data-table__owner">
+                      <span class="data-table__owner-name">James Wilson</span>
+                      <span class="data-table__owner-role">Student</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="trust-score trust-score--high">98%</span>
+                  </td>
+                  <td>
+                    <span class="evidence-badge">3 photos + serial</span>
+                  </td>
+                  <td>
+                    <button class="btn btn--primary btn--sm">Verify &amp; Release</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="data-table__item">
+                      <span class="material-symbols-outlined data-table__item-icon">key</span>
+                      <div>
+                        <span class="data-table__item-name">Car Key Fob (Subaru)</span>
+                        <span class="data-table__item-id">Item #FI-104</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="data-table__owner">
+                      <span class="data-table__owner-name">Dr. Sarah Chen</span>
+                      <span class="data-table__owner-role badge badge--faculty">Faculty</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="trust-score trust-score--medium">87%</span>
+                  </td>
+                  <td>
+                    <span class="evidence-badge">Key photo + description</span>
+                  </td>
+                  <td>
+                    <button class="btn btn--outlined btn--sm">Review</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="data-table__item">
+                      <span class="material-symbols-outlined data-table__item-icon">headphones</span>
+                      <div>
+                        <span class="data-table__item-name">Sony WH-1000XM5 Headphones</span>
+                        <span class="data-table__item-id">Item #FI-108</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="data-table__owner">
+                      <span class="data-table__owner-name">Anonymous</span>
+                      <span class="data-table__owner-role">Unverified</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="trust-score trust-score--low">42%</span>
+                  </td>
+                  <td>
+                    <span class="evidence-badge evidence-badge--low">Low proof</span>
+                  </td>
+                  <td>
+                    <button class="btn btn--danger btn--sm">Hold for Review</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Weekly Custody Chart -->
+        <div class="card">
+          <div class="card__header">
+            <div class="card__header-left">
+              <h2 class="card__title">Weekly Custody Intake</h2>
+              <span class="card__subtitle">Items deposited this week</span>
+            </div>
+            <span class="card__badge">Mon-Sat</span>
+          </div>
+          <div class="card__body">
+            <div class="bar-chart">
+              <div class="bar-chart__item">
+                <span class="bar-chart__value">34</span>
+                <div class="bar-chart__track">
+                  <div class="bar-chart__bar" style="height: 68%"></div>
+                </div>
+                <span class="bar-chart__label">Mon</span>
+              </div>
+              <div class="bar-chart__item">
+                <span class="bar-chart__value">41</span>
+                <div class="bar-chart__track">
+                  <div class="bar-chart__bar" style="height: 82%"></div>
+                </div>
+                <span class="bar-chart__label">Tue</span>
+              </div>
+              <div class="bar-chart__item">
+                <span class="bar-chart__value">28</span>
+                <div class="bar-chart__track">
+                  <div class="bar-chart__bar" style="height: 56%"></div>
+                </div>
+                <span class="bar-chart__label">Wed</span>
+              </div>
+              <div class="bar-chart__item">
+                <span class="bar-chart__value">37</span>
+                <div class="bar-chart__track">
+                  <div class="bar-chart__bar" style="height: 74%"></div>
+                </div>
+                <span class="bar-chart__label">Thu</span>
+              </div>
+              <div class="bar-chart__item">
+                <span class="bar-chart__value">50</span>
+                <div class="bar-chart__track">
+                  <div class="bar-chart__bar bar-chart__bar--highlight" style="height: 100%"></div>
+                </div>
+                <span class="bar-chart__label">Fri</span>
+              </div>
+              <div class="bar-chart__item">
+                <span class="bar-chart__value">22</span>
+                <div class="bar-chart__track">
+                  <div class="bar-chart__bar" style="height: 44%"></div>
+                </div>
+                <span class="bar-chart__label">Sat</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Compliance Checklist -->
+        <div class="card">
+          <div class="card__header">
+            <div class="card__header-left">
+              <h2 class="card__title">Compliance Checklist</h2>
+              <span class="card__subtitle">All requirements met for today's shift</span>
+            </div>
+            <span class="status-badge status-badge--success">
+              <span class="material-symbols-outlined">check_circle</span>
+              All Clear
+            </span>
+          </div>
+          <div class="card__body">
+            <ul class="checklist">
+              <li class="checklist__item checklist__item--checked">
+                <span class="checklist__icon material-symbols-outlined">check_circle</span>
+                <span class="checklist__text">Morning vault count verified (248 items reconciled)</span>
+              </li>
+              <li class="checklist__item checklist__item--checked">
+                <span class="checklist__icon material-symbols-outlined">check_circle</span>
+                <span class="checklist__text">Camera feeds operational at all 4 intake stations</span>
+              </li>
+              <li class="checklist__item checklist__item--checked">
+                <span class="checklist__icon material-symbols-outlined">check_circle</span>
+                <span class="checklist__text">Evidence backup completed to secure cloud (08:00 EST)</span>
+              </li>
+              <li class="checklist__item checklist__item--checked">
+                <span class="checklist__icon material-symbols-outlined">check_circle</span>
+                <span class="checklist__text">High-value item signatures on file for all 19 pending claims</span>
+              </li>
+              <li class="checklist__item checklist__item--checked">
+                <span class="checklist__icon material-symbols-outlined">check_circle</span>
+                <span class="checklist__text">Shift handover log initialized and time-stamped</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Sidebar (4 cols) -->
+      <aside class="sidebar">
+
+        <!-- Physical Intake Scanner -->
+        <div class="card">
+          <div class="card__header">
+            <h2 class="card__title">
+              <span class="material-symbols-outlined">qr_code_scanner</span>
+              Physical Intake Scanner
+            </h2>
+          </div>
+          <div class="card__body">
+            <div class="scanner-viewport">
+              <div class="scanner-viewport__frame">
+                <span class="scanner-viewport__corner scanner-viewport__corner--tl"></span>
+                <span class="scanner-viewport__corner scanner-viewport__corner--tr"></span>
+                <span class="scanner-viewport__corner scanner-viewport__corner--bl"></span>
+                <span class="scanner-viewport__corner scanner-viewport__corner--br"></span>
+                <div class="scanner-viewport__reticle"></div>
+              </div>
+              <p class="scanner-viewport__text">Position barcode within frame</p>
+            </div>
+            <button class="btn btn--primary btn--full">
+              <span class="material-symbols-outlined">qr_code_scanner</span>
+              Scan Item Barcode
+            </button>
+            <div class="manual-input">
+              <label class="manual-input__label" for="manual-barcode">Or enter barcode manually</label>
+              <div class="manual-input__row">
+                <input type="text" id="manual-barcode" class="input" placeholder="e.g. FI-2024-0847">
+                <button class="btn btn--icon" aria-label="Submit barcode">
+                  <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Locker Escrow Bay -->
+        <div class="card">
+          <div class="card__header">
+            <h2 class="card__title">
+              <span class="material-symbols-outlined">lock</span>
+              Locker Escrow Bay
+            </h2>
+            <span class="card__badge">4 &times; 3 Grid</span>
+          </div>
+          <div class="card__body">
+            <div class="locker-grid">
+              <!-- Row 1 -->
+              <div class="locker locker--occupied">
+                <span class="locker__number">1</span>
+                <span class="locker__dot"></span>
+              </div>
+              <div class="locker locker--occupied">
+                <span class="locker__number">2</span>
+                <span class="locker__dot"></span>
+              </div>
+              <div class="locker locker--occupied">
+                <span class="locker__number">3</span>
+                <span class="locker__dot"></span>
+              </div>
+              <div class="locker locker--occupied">
+                <span class="locker__number">4</span>
+                <span class="locker__dot"></span>
+              </div>
+              <!-- Row 2 -->
+              <div class="locker locker--occupied">
+                <span class="locker__number">5</span>
+                <span class="locker__dot"></span>
+              </div>
+              <div class="locker locker--locked">
+                <span class="locker__number">6</span>
+                <span class="locker__dot"></span>
+              </div>
+              <div class="locker locker--occupied">
+                <span class="locker__number">7</span>
+                <span class="locker__dot"></span>
+              </div>
+              <div class="locker locker--empty">
+                <span class="locker__number">8</span>
+                <span class="locker__dot"></span>
+              </div>
+              <!-- Row 3 -->
+              <div class="locker locker--occupied">
+                <span class="locker__number">9</span>
+                <span class="locker__dot"></span>
+              </div>
+              <div class="locker locker--locked">
+                <span class="locker__number">10</span>
+                <span class="locker__dot"></span>
+              </div>
+              <div class="locker locker--occupied">
+                <span class="locker__number">11</span>
+                <span class="locker__dot"></span>
+              </div>
+              <div class="locker locker--empty">
+                <span class="locker__number">12</span>
+                <span class="locker__dot"></span>
+              </div>
+            </div>
+            <div class="locker-legend">
+              <span class="locker-legend__item">
+                <span class="locker-legend__dot locker-legend__dot--occupied"></span>
+                Occupied
+              </span>
+              <span class="locker-legend__item">
+                <span class="locker-legend__dot locker-legend__dot--locked"></span>
+                High-Value
+              </span>
+              <span class="locker-legend__item">
+                <span class="locker-legend__dot locker-legend__dot--empty"></span>
+                Empty
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chain of Custody Audit Log -->
+        <div class="card">
+          <div class="card__header">
+            <h2 class="card__title">
+              <span class="material-symbols-outlined">history</span>
+              Chain of Custody Audit Log
+            </h2>
+          </div>
+          <div class="card__body">
+            <ul class="audit-log">
+              <li class="audit-log__entry">
+                <div class="audit-log__time">12:42 PM</div>
+                <div class="audit-log__content">
+                  <span class="material-symbols-outlined audit-log__icon audit-log__icon--intake">inventory_2</span>
+                  <span>Intake: Dell XPS Charger <span class="audit-log__arrow">&rarr;</span> Locker #3</span>
+                </div>
+              </li>
+              <li class="audit-log__entry">
+                <div class="audit-log__time">12:15 PM</div>
+                <div class="audit-log__content">
+                  <span class="material-symbols-outlined audit-log__icon audit-log__icon--release">check_circle</span>
+                  <span>Claim Verified: MacBook Pro <span class="audit-log__arrow">&rarr;</span> Released to J. Wilson</span>
+                </div>
+              </li>
+              <li class="audit-log__entry">
+                <div class="audit-log__time">11:58 AM</div>
+                <div class="audit-log__content">
+                  <span class="material-symbols-outlined audit-log__icon audit-log__icon--ai">psychology</span>
+                  <span>AI Match: TI-84 Calculator (#LR-991 &harr; #FI-103)</span>
+                </div>
+              </li>
+              <li class="audit-log__entry">
+                <div class="audit-log__time">11:30 AM</div>
+                <div class="audit-log__content">
+                  <span class="material-symbols-outlined audit-log__icon audit-log__icon--deposit">add_circle</span>
+                  <span>Deposit: Sony Headphones <span class="audit-log__arrow">&rarr;</span> Pending Review</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      </aside>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer__inner container">
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <a href="index.html" class="footer__logo">
+            <span class="material-symbols-outlined">school</span>
+            <span>Campus Lost &amp; Found</span>
+          </a>
+          <p class="footer__desc">Helping reunite students with their belongings since 2022. Powered by AI matching technology.</p>
+        </div>
+        <div class="footer__col">
+          <h4 class="footer__heading">Quick Links</h4>
+          <a href="report-lost.html" class="footer__link">Report Lost Item</a>
+          <a href="report-found.html" class="footer__link">Report Found Item</a>
+          <a href="browse.html" class="footer__link">Track My Items</a>
+          <a href="admin.html" class="footer__link">Admin Portal</a>
+        </div>
+        <div class="footer__col">
+          <h4 class="footer__heading">Resources</h4>
+          <a href="#" class="footer__link">FAQ</a>
+          <a href="#" class="footer__link">Privacy Policy</a>
+          <a href="#" class="footer__link">Terms of Service</a>
+          <a href="#" class="footer__link">Contact Support</a>
+        </div>
+        <div class="footer__col">
+          <h4 class="footer__heading">Campus Hours</h4>
+          <p class="footer__text">Mon-Fri: 8:00 AM - 6:00 PM</p>
+          <p class="footer__text">Saturday: 9:00 AM - 1:00 PM</p>
+          <p class="footer__text">Sunday: Closed</p>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <p>&copy; 2026 Campus Lost &amp; Found Portal. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js?v=20260929"></script>
+  <script>
+    document.querySelectorAll('.filter-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.filter-tab').forEach(function(t) {
+          t.classList.remove('filter-tab--active');
+        });
+        tab.classList.add('filter-tab--active');
+      });
+    });
+  </script>
+</body>
+</html>
